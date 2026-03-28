@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Time Dashboard</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --text: #f8fafc;
+            --accent: #38bdf8;
+        }
+
+        .light-theme {
+            --bg: #f1f5f9;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --accent: #0284c7;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 40px 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #clock, #stopwatch-display {
+            font-size: 3.5rem;
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .label {
+            color: var(--accent);
+            text-transform: uppercase;
+            font-weight: bold;
+            font-size: 0.75rem;
+            margin-bottom: 15px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        button {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .btn-lap { background: #8b5cf6; color: white; }
+        .btn-theme { position: fixed; top: 20px; right: 20px; background: var(--accent); color: white; }
+
+        #laps {
+            margin-top: 15px;
+            list-style: none;
+            padding: 0;
+            max-height: 150px;
+            overflow-y: auto;
+            text-align: left;
+        }
+
+        #laps li {
+            padding: 8px;
+            border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+            display: flex;
+            justify-content: space-between;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+
+    <button class="btn-theme" onclick="toggleTheme()">🌓 Switch Theme</button>
+
+    <div class="card">
+        <div class="label">Current Time</div>
+        <div id="clock">00:00:00</div>
+    </div>
+
+    <div class="card">
+        <div class="label">Stopwatch + Laps</div>
+        <div id="stopwatch-display">00:00:00</div>
+        
+        <div class="controls">
+            <button style="background: #22c55e; color: white;" onclick="startStopwatch()">Start</button>
+            <button style="background: #ef4444; color: white;" onclick="stopStopwatch()">Stop</button>
+            <button class="btn-lap" onclick="recordLap()">Lap</button>
+            <button style="background: #64748b; color: white;" onclick="resetStopwatch()">Reset</button>
+        </div>
+
+        <ul id="laps"></ul>
+    </div>
+
+    <script>
+        // --- THEME LOGIC ---
+        function toggleTheme() {
+            document.body.classList.toggle('light-theme');
+        }
+
+        // --- CLOCK ---
+        setInterval(() => {
+            document.getElementById('clock').textContent = new Date().toLocaleTimeString();
+        }, 1000);
+
+        // --- STOPWATCH & LAPS ---
+        let startTime, timerInterval, elapsedTime = 0;
+        let laps = [];
+
+        function timeToString(time) {
+            let hh = Math.floor(time / 3600000).toString().padStart(2, "0");
+            let mm = Math.floor((time % 3600000) / 60000).toString().padStart(2, "0");
+            let ss = Math.floor((time % 60000) / 1000).toString().padStart(2, "0");
+            return `${hh}:${mm}:${ss}`;
+        }
+
+        function startStopwatch() {
+            if (timerInterval) return; // Prevent multiple intervals
+            startTime = Date.now() - elapsedTime;
+            timerInterval = setInterval(() => {
+                elapsedTime = Date.now() - startTime;
+                document.getElementById("stopwatch-display").textContent = timeToString(elapsedTime);
+            }, 1000);
+        }
+
+        function stopStopwatch() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+
+        function resetStopwatch() {
+            stopStopwatch();
+            elapsedTime = 0;
+            laps = [];
+            document.getElementById("stopwatch-display").textContent = "00:00:00";
+            document.getElementById("laps").innerHTML = "";
+        }
+
+        function recordLap() {
+            if (elapsedTime === 0) return;
+            const lapTime = timeToString(elapsedTime);
+            laps.push(lapTime);
+            
+            const li = document.createElement("li");
+            li.innerHTML = `<span>Lap ${laps.length}</span> <span>${lapTime}</span>`;
+            document.getElementById("laps").prepend(li);
+        }
+    </script>
+</body>
+</html>
