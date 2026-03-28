@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium Time Dashboard</title>
+    <title>Professional Time Dashboard</title>
     <style>
         :root {
             --bg: #0f172a;
@@ -11,22 +11,26 @@
             --text: #f8fafc;
             --accent: #38bdf8;
             --ad-bg: #1e293b;
+            --ad-border: #334155;
         }
 
+        /* Basic Setup */
         body {
             background-color: var(--bg);
             color: var(--text);
             margin: 0;
-            font-family: 'Inter', sans-serif;
+            padding: 0;
+            font-family: 'Inter', -apple-system, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         /* --- AD SPACES --- */
-        .ad-banner {
-            width: 100%;
+        .ad-horizontal {
+            width: 95%;
             max-width: 970px;
             height: 90px;
             background: var(--ad-bg);
@@ -34,19 +38,23 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px dashed #475569;
-            color: #475569;
-            font-size: 0.8rem;
+            border: 1px dashed var(--ad-border);
+            color: #64748b;
+            font-size: 0.75rem;
             text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 8px;
         }
 
-        .main-layout {
+        .main-container {
             display: flex;
             width: 100%;
-            max-width: 1200px;
-            justify-content: center;
-            gap: 20px;
-            flex-grow: 1;
+            max-width: 1400px;
+            flex: 1;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            box-sizing: border-box;
         }
 
         .side-ad {
@@ -56,115 +64,183 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px dashed #475569;
+            border: 1px dashed var(--ad-border);
             writing-mode: vertical-rl;
-            color: #475569;
+            color: #64748b;
+            font-size: 0.75rem;
+            border-radius: 8px;
         }
 
-        /* --- CENTER CLOCK --- */
+        /* --- CENTER CONTENT --- */
         .content-area {
             flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            text-align: center;
         }
 
         #clock {
-            font-size: 8rem; /* BIG CLOCK */
+            font-size: 10rem; /* Massive size for desktop */
             font-weight: 900;
-            letter-spacing: -5px;
+            line-height: 1;
             color: var(--accent);
-            text-shadow: 0 0 30px rgba(56, 189, 248, 0.3);
-            margin-bottom: 0;
+            text-shadow: 0 0 40px rgba(56, 189, 248, 0.2);
+            margin: 0;
+            font-variant-numeric: tabular-nums;
         }
 
         #date {
             font-size: 1.5rem;
             color: #94a3b8;
-            margin-top: -10px;
-            letter-spacing: 5px;
+            margin-top: 10px;
+            letter-spacing: 4px;
             text-transform: uppercase;
         }
 
-        /* --- STOPWATCH CARD --- */
-        .stopwatch-card {
+        /* --- TOOLS SECTION --- */
+        .tools-container {
+            margin-top: 40px;
             background: var(--card-bg);
-            padding: 2rem;
+            padding: 25px;
             border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            margin-top: 50px;
-            width: 300px;
-            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            width: 100%;
+            max-width: 350px;
         }
 
-        .controls button {
-            background: var(--accent);
-            color: var(--bg);
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
+        #stopwatch-display {
+            font-size: 2.5rem;
             font-weight: bold;
+            margin-bottom: 20px;
+            font-family: monospace;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
             cursor: pointer;
-            margin: 5px;
+            transition: all 0.2s;
+        }
+
+        .btn-start { background: #22c55e; color: #fff; }
+        .btn-stop { background: #ef4444; color: #fff; }
+        .btn-reset { background: #475569; color: #fff; }
+        button:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 1024px) {
+            .side-ad {
+                display: none; /* Remove side ads on tablets and phones */
+            }
+            #clock {
+                font-size: 6rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #clock {
+                font-size: 4rem; /* Fit on small phones */
+            }
+            #date {
+                font-size: 1rem;
+                letter-spacing: 2px;
+            }
+            .ad-horizontal {
+                height: 60px;
+                font-size: 0.6rem;
+            }
         }
     </style>
 </head>
 <body>
 
-    <div class="ad-banner">Top Leaderboard Ad Space (970x90)</div>
+    <div class="ad-horizontal">
+        Your Ad Here (970x90 Leaderboard)
+    </div>
 
-    <div class="main-layout">
-        <div class="side-ad">Skyscraper Ad Space (160x600)</div>
+    <div class="main-container">
+        <div class="side-ad">Side Ad Space (160x600)</div>
 
         <div class="content-area">
             <div id="clock">00:00:00</div>
-            <div id="date">LOADING...</div>
+            <div id="date">LOADING DATE...</div>
 
-            <div class="stopwatch-card">
-                <div id="stopwatch-display" style="font-size: 2rem; font-weight: bold;">00:00:00</div>
-                <div class="controls">
-                    <button onclick="startStopwatch()">Start</button>
-                    <button onclick="stopStopwatch()" style="background:#ef4444; color:white;">Stop</button>
-                    <button onclick="resetStopwatch()" style="background:#64748b; color:white;">Reset</button>
+            <div class="tools-container">
+                <div style="font-size: 0.7rem; color: var(--accent); margin-bottom: 10px; letter-spacing: 2px;">STOPWATCH</div>
+                <div id="stopwatch-display">00:00:00</div>
+                <div class="btn-group">
+                    <button class="btn-start" onclick="startStopwatch()">START</button>
+                    <button class="btn-stop" onclick="stopStopwatch()">STOP</button>
+                    <button class="btn-reset" onclick="resetStopwatch()">RESET</button>
                 </div>
             </div>
         </div>
 
-        <div class="side-ad">Skyscraper Ad Space (160x600)</div>
+        <div class="side-ad">Side Ad Space (160x600)</div>
     </div>
 
-    <div class="ad-banner">Footer Ad Space (970x90)</div>
+    <div class="ad-horizontal">
+        Footer Ad Space (970x90)
+    </div>
 
     <script>
-        // Real-time Clock logic
+        // --- CLOCK LOGIC ---
         function updateClock() {
             const now = new Date();
-            document.getElementById('clock').textContent = now.toLocaleTimeString([], {hour12: false});
+            
+            // Format: HH:MM:SS
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
+            
+            // Format Date
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             document.getElementById('date').textContent = now.toLocaleDateString(undefined, options);
         }
         setInterval(updateClock, 1000);
         updateClock();
 
-        // Basic Stopwatch logic
+        // --- STOPWATCH LOGIC ---
         let startTime, timerInterval, elapsedTime = 0;
+
         function timeToString(time) {
             let hh = Math.floor(time / 3600000).toString().padStart(2, "0");
             let mm = Math.floor((time % 3600000) / 60000).toString().padStart(2, "0");
             let ss = Math.floor((time % 60000) / 1000).toString().padStart(2, "0");
             return `${hh}:${mm}:${ss}`;
         }
+
         function startStopwatch() {
             if (timerInterval) return;
             startTime = Date.now() - elapsedTime;
             timerInterval = setInterval(() => {
                 elapsedTime = Date.now() - startTime;
                 document.getElementById("stopwatch-display").textContent = timeToString(elapsedTime);
-            }, 1000);
+            }, 100); // Updated to 100ms for smoother visual
         }
-        function stopStopwatch() { clearInterval(timerInterval); timerInterval = null; }
-        function resetStopwatch() { stopStopwatch(); elapsedTime = 0; document.getElementById("stopwatch-display").textContent = "00:00:00"; }
+
+        function stopStopwatch() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+
+        function resetStopwatch() {
+            stopStopwatch();
+            elapsedTime = 0;
+            document.getElementById("stopwatch-display").textContent = "00:00:00";
+        }
     </script>
 </body>
 </html>
